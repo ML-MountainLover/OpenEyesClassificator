@@ -22,7 +22,7 @@ def train_classificator(
 
     data_module = EyesDataModule(
         data_csv_path=data_csv_path,
-        label_column="labels",
+        label_column=label_column,
     )
 
     if chekpoint_path is None:
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         )
 
     train_classificator(
-        data_csv_path="./test.csv",
+        data_csv_path="./marked_data/Final_data.csv",
         label_column="label",
         exp_name="test_exp",
         chekpoint_path="./checkpoints/kaggle_model.ckpt",
