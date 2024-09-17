@@ -17,4 +17,4 @@ touch .env && echo DRIVE_ID=1E2tscC_VKhJKLciRwJEPRFbacfoZRanU > .env
 python3 classificator.py
 ```
 ## Отчет
-  [Ссылка на отчет]('report.pdf')
+  [Ссылка на отчет](report.pdf)
