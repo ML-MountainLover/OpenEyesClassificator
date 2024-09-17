@@ -1,5 +1,10 @@
 # OpenEyesClassificator
 ## Запуск кода
+0. Создать и активировать окружение
+ ```
+python3 -m venv envOpenEyesClassificator
+source envOpenEyesClassificator/bin/activate
+ ```
 1. Склонировать репозиторий и перейти в его папку
 ```
 git clone https://github.com/ML-MountainLover/OpenEyesClassificator.git
