@@ -53,5 +53,5 @@ class OpenEyesClassificator:
 
 if __name__ == "__main__":
     classificator = OpenEyesClassificator()
-    is_open_score = classificator.predict("./test.png")
+    is_open_score = classificator.predict("./test_data/test.png")
     print(f"is_open_score = {is_open_score}")
