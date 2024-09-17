@@ -1,8 +1,9 @@
 # OpenEyesClassificator
 ## Запуск кода
-1. Склонировать репозиторий
+1. Склонировать репозиторий и перейти в его папку
 ```
 git clone https://github.com/ML-MountainLover/OpenEyesClassificator.git
+cd OpenEyesClassificator
 ```
 2. Установить зависимости
 ```

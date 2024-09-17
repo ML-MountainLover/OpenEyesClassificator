@@ -50,12 +50,13 @@ class LightningEyesClassifier(pl.LightningModule):
     def EER_score(self, logits, gt):
         logits = logits.detach().cpu().numpy()
         gt = gt.detach().cpu().numpy()
+        # случай, когда метрика не определена 
         if len(np.unique(gt)) < 2:
-            return torch.tensor(-1.0)
+            return None 
         fpr, tpr, _ = roc_curve(gt, logits, pos_label=1)
         fnr = 1 - tpr
         if np.isnan(fpr).any() or np.isnan(fnr).any():
-            return torch.tensor(-1.0)
+            return None
         EER = fpr[np.nanargmin(np.abs(fnr - fpr))]
         return torch.tensor(EER)
 
@@ -64,12 +65,10 @@ class LightningEyesClassifier(pl.LightningModule):
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.long())
         self.train_loss.append(loss.detach().cpu())
-        logs = {"train_loss": loss}
         eer = self.EER_score(torch.softmax(logits, dim=1)[:, 1].detach().cpu(), y)
-        self.train_eer.append(eer.detach().cpu())
-        self.log("train_eer", eer, on_step=False, on_epoch=True, prog_bar=False)
-        self.log("train_loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        return {"loss": loss, "log": logs}
+        if eer is not None:
+            self.train_eer.append(eer.detach().cpu())
+        return {"loss": loss}
 
     def validation_step(self, val_batch, batch_idx):
         x, y = val_batch
@@ -77,19 +76,15 @@ class LightningEyesClassifier(pl.LightningModule):
         loss = F.cross_entropy(logits, y.long())
         self.val_loss.append(loss.detach().cpu())
         eer = self.EER_score(torch.softmax(logits, dim=1)[:, 1].detach().cpu(), y)
-        self.val_eer.append(eer.detach().cpu())
-        self.log("val_eer", eer, on_step=False, on_epoch=True, prog_bar=False)
-        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        return {"val_loss": loss, "val_eer": eer}
+        if eer is not None:
+            self.val_eer.append(eer.detach().cpu())
+        return {"val_loss": loss}
 
     def test_step(self, val_batch, batch_idx):
         x, y = val_batch
         logits = self.forward(x)
         loss = F.cross_entropy(logits, y.long())
-        eer = self.EER_score(torch.softmax(logits, dim=1)[:, 1].detach().cpu(), y)
-        self.log("test_eer", eer, on_step=False, on_epoch=True, prog_bar=False)
-        self.log("test_loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        return {"test_loss": loss, "test_eer": eer}
+        return {"test_loss": loss}
 
     def on_train_epoch_end(self):
         avg_loss = torch.stack(self.train_loss).mean()
