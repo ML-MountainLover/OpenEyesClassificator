@@ -28,8 +28,9 @@ class OpenEyesClassificator:
 
     def load_checkpoint(self, model_checkpoint):
         folder_path = "/".join(model_checkpoint.split("/")[:-1])
-        if not os.path.exists(folder_path):
-            os.mkdir(folder_path)
+        if not os.path.exists(model_checkpoint):
+            if not os.path.exists(folder_path):
+                os.mkdir(folder_path)
             gdown.download(id=DRIVE_ID, output=model_checkpoint)
 
     def data_process(self, inpIm):

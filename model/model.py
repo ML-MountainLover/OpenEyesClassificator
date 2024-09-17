@@ -34,7 +34,7 @@ class EyesClassifier(pl.LightningModule):
 
 
 class LightningEyesClassifier(pl.LightningModule):
-    def __init__(self, lr_rate=5e-4, freeze=None):
+    def __init__(self, lr_rate=1e-3, freeze=None):
         super(LightningEyesClassifier, self).__init__()
 
         self.model = EyesClassifier(freeze)
@@ -50,9 +50,9 @@ class LightningEyesClassifier(pl.LightningModule):
     def EER_score(self, logits, gt):
         logits = logits.detach().cpu().numpy()
         gt = gt.detach().cpu().numpy()
-        # случай, когда метрика не определена 
+        # случай, когда метрика не определена
         if len(np.unique(gt)) < 2:
-            return None 
+            return None
         fpr, tpr, _ = roc_curve(gt, logits, pos_label=1)
         fnr = 1 - tpr
         if np.isnan(fpr).any() or np.isnan(fnr).any():
@@ -78,6 +78,7 @@ class LightningEyesClassifier(pl.LightningModule):
         eer = self.EER_score(torch.softmax(logits, dim=1)[:, 1].detach().cpu(), y)
         if eer is not None:
             self.val_eer.append(eer.detach().cpu())
+        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         return {"val_loss": loss}
 
     def test_step(self, val_batch, batch_idx):

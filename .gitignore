@@ -162,3 +162,13 @@ cython_debug/
 #.idea/
 
 checkpoints/
+
+EyesDataset.zip
+
+EyesDataset/
+
+test.csv
+
+test_dataloader.py
+
+ckeckpoints/
